@@ -1,0 +1,48 @@
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: rgba(0, 0, 0, 0.5);
+  text-align: center;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+body h1 {
+  font-size: 70px;
+}
+body .timerContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+body .timerContainer .times {
+  display: flex;
+  flex-direction: row;
+  font-size: 200px;
+}
+body .timerContainer .minuteContainer button {
+  font-size: 14px;
+  font-weight: 700;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: orange;
+  color: black;
+  margin: 5px;
+}
+body .timerContainer .minuteContainer button:hover {
+  background-color: black;
+  color: orange;
+}
+body .timerContainer .btnContainer button {
+  border: none;
+  padding: 20px;
+  border-radius: 20px;
+  font-size: 18px;
+  font-weight: 700;
+  margin: 10px;
+}
+body .timerContainer .btnContainer button:hover {
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+}/*# sourceMappingURL=main.css.map */
