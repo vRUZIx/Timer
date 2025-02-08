@@ -2,81 +2,78 @@ const _hour = document.getElementById("hour");
 const _minute = document.getElementById("minute");
 const _second = document.getElementById("second");
 
-const alarm = new Audio('C:\\Users\\ASUS\\OneDrive\\Desktop\\timer\\assets\\music\\alarmsound.wav');
+const alarm = new Audio('assets/music/alarmsound.wav');
 
-let min = 0, h = 0, sec = 0;
+let totalTimeInSeconds = 0; // Total time in seconds
 let intervalId = null;
+let startTime = null; // Timestamp when countdown started
 
-document.addEventListener("click", myfunction);
-function myfunction(event) {
-    const clcbtn = event.target.id; 
-    if (clcbtn === "plus1") min += 1;
-    if (clcbtn === "plus5") min += 5;
-    if (clcbtn === "plus30") min += 30;
-    if (clcbtn === "minus1") min -= 1;
-    if (clcbtn === "minus5") min -= 5;
-    if (clcbtn === "minus30") min -= 30;
-    if (min >= 60) {
-        h += Math.floor(min / 60);
-        min %= 60;
-    }
-    if (min < 0) {
-        if (h > 0) {
-            h--;    
-            min+=60;
-        } else {
-            min=0;
-            sec=0;
-        }
-    }
+document.addEventListener("click", handleClick);
+
+function handleClick(event) {
+    const clickedButtonId = event.target.id;
+
+    if (clickedButtonId === "plus1") totalTimeInSeconds += 60;
+    if (clickedButtonId === "plus5") totalTimeInSeconds += 5 * 60;
+    if (clickedButtonId === "plus30") totalTimeInSeconds += 30 * 60;
+    if (clickedButtonId === "minus1") totalTimeInSeconds -= 60;
+    if (clickedButtonId === "minus5") totalTimeInSeconds -= 5 * 60;
+    if (clickedButtonId === "minus30") totalTimeInSeconds -= 30 * 60;
+
+    // Prevent negative time
+    if (totalTimeInSeconds < 0) totalTimeInSeconds = 0;
+
     updateDisplay();
-    if (clcbtn === "startBtn") {
-        if (!intervalId) { 
+
+    if (clickedButtonId === "startBtn") {
+        if (!intervalId) {
+            startTime = Date.now(); // Record the start time
             intervalId = setInterval(countdown, 1000);
         }
     }
-    if (clcbtn === "pouseBtn") {
+
+    if (clickedButtonId === "pouseBtn") {
         clearInterval(intervalId);
-        intervalId = null; 
+        intervalId = null;
     }
-    if(clcbtn==="resetBtn"){    
-          h = 0;
-        min = 0;
-        sec = 0;
-        clearInterval(intervalId); 
-        intervalId = null; 
-        alarm.play();
+
+    if (clickedButtonId === "resetBtn") {
+        totalTimeInSeconds = 0;
+        clearInterval(intervalId);
+        intervalId = null;
+        alarm.pause();
+        alarm.currentTime = 0;
         updateDisplay();
     }
 }
+
 function countdown() {
-    if (h === 0 && min === 0 && sec === 0) {
-        console.log("Done");
+    const now = Date.now();
+    const elapsedTime = Math.floor((now - startTime) / 1000); // Elapsed time in seconds
+    const remainingTime = totalTimeInSeconds - elapsedTime;
+
+    if (remainingTime <= 0) {
         clearInterval(intervalId);
         alarm.play();
+        totalTimeInSeconds = 0;
+        updateDisplay();
         intervalId = null;
         return;
     }
-    sec--;
-    if (sec < 0) {
-        if (min > 0) {
-            min--;
-            sec = 59;
-        } else if (h > 0) {
-            h--;
-            min = 59;
-            sec = 59;
-        } else {
-            sec = 0;
-        }
-    }
-    updateDisplay();
+
+    updateDisplay(remainingTime);
 }
-function updateDisplay() {
-    _hour.textContent = formatvalue(h);
-    _minute.textContent = formatvalue(min);
-    _second.textContent = formatvalue(sec);
+
+function updateDisplay(remainingTime = totalTimeInSeconds) {
+    const h = Math.floor(remainingTime / 3600);
+    const min = Math.floor((remainingTime % 3600) / 60);
+    const sec = remainingTime % 60;
+
+    _hour.textContent = formatValue(h);
+    _minute.textContent = formatValue(min);
+    _second.textContent = formatValue(sec);
 }
-const formatvalue = (time)=>{
-    return time.toString().padStart(2,"0");
-}
+
+const formatValue = (time) => {
+    return time.toString().padStart(2, "0");
+};
